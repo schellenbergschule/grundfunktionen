@@ -1,176 +1,84 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Funktionsgraphen, die du kennen musst!</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
-        .container { max-width: 1400px; margin: 0 auto; background: white; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden; }
-        header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; }
-        h1 { font-size: 2.5em; margin-bottom: 10px; }
-        .subtitle { font-size: 1.1em; opacity: 0.9; }
-        .controls { display: flex; flex-wrap: wrap; gap: 10px; padding: 20px; background: #f8f9fa; border-bottom: 2px solid #e9ecef; }
-        .function-btn { padding: 12px 20px; border: 2px solid #e9ecef; border-radius: 8px; background: white; color: #495057; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        .function-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
-        .function-btn.active { background: #28a745; color: white; border-color: #28a745; }
-        .function-btn.active::before { content: '✓ '; font-weight: bold; }
-        .main-content { display: flex; padding: 30px; gap: 30px; }
-        .canvas-container { flex: 1; display: flex; justify-content: center; align-items: center; }
-        canvas { border: 2px solid #e9ecef; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-width: 100%; height: auto; }
-        .sidebar { width: 300px; display: flex; flex-direction: column; gap: 20px; }
-        .slider-container { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: 2px solid #e9ecef; display: none; }
-        .slider-container.active { display: block; }
-        .slider-container h3 { color: #667eea; margin-bottom: 20px; font-size: 1.3em; text-align: center; }
-        .slider-wrapper { margin-bottom: 15px; }
-        .slider-wrapper input[type="range"] { width: 100%; height: 8px; border-radius: 5px; background: #e9ecef; outline: none; -webkit-appearance: none; }
-        .slider-wrapper input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 24px; height: 24px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
-        .slider-wrapper input[type="range"]::-moz-range-thumb { width: 24px; height: 24px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); cursor: pointer; border: none; box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
-        .slider-value { text-align: center; font-size: 2em; color: #764ba2; font-weight: bold; margin-top: 15px; font-family: 'Courier New', monospace; }
-        .legend { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: 2px solid #e9ecef; }
-        .legend h3 { color: #667eea; margin-bottom: 15px; font-size: 1.3em; }
-        .legend-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; font-size: 14px; }
-        .legend-color { width: 30px; height: 4px; border-radius: 2px; }
-        @media (max-width: 1024px) { .main-content { flex-direction: column; } .sidebar { width: 100%; } h1 { font-size: 2em; } .function-btn { font-size: 11px; padding: 10px 14px; } }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Funktionsgraphen</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+.container { max-width: 1400px; margin: 0 auto; background: white; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 20px 20px 0 0; }
+h1 { font-size: 2.5em; margin-bottom: 10px; }
+.subtitle { font-size: 1.1em; opacity: 0.9; }
+.controls { display: flex; flex-wrap: wrap; gap: 10px; padding: 20px; background: #f8f9fa; }
+.function-btn { padding: 12px 20px; border: 2px solid #e9ecef; border-radius: 8px; background: white; color: #495057; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.function-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+.function-btn.active { background: #28a745; color: white; border-color: #28a745; }
+.function-btn.active::before { content: '✓ '; }
+.main-content { display: flex; padding: 30px; gap: 30px; }
+.canvas-container { flex: 1; display: flex; justify-content: center; align-items: center; }
+canvas { border: 2px solid #e9ecef; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+.sidebar { width: 300px; display: flex; flex-direction: column; gap: 20px; }
+.slider-container { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: 2px solid #e9ecef; display: none; }
+.slider-container.active { display: block; }
+.slider-container h3 { color: #667eea; margin-bottom: 20px; font-size: 1.3em; text-align: center; }
+.slider-wrapper input[type="range"] { width: 100%; height: 8px; border-radius: 5px; background: #e9ecef; outline: none; -webkit-appearance: none; }
+.slider-wrapper input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 24px; height: 24px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); cursor: pointer; }
+.slider-value { text-align: center; font-size: 2em; color: #764ba2; font-weight: bold; margin-top: 15px; }
+.legend { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: 2px solid #e9ecef; }
+.legend h3 { color: #667eea; margin-bottom: 15px; font-size: 1.3em; }
+.legend-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; font-size: 14px; }
+.legend-color { width: 30px; height: 4px; border-radius: 2px; }
+</style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>📊 Funktionsgraphen, die du kennen musst!</h1>
-            <p class="subtitle">Interaktive Visualisierung wichtiger mathematischer Funktionen</p>
-        </header>
-        <div class="controls">
-            <button class="function-btn active" data-function="linear">f(x) = x (Linear)</button>
-            <button class="function-btn" data-function="quadratic">f(x) = x² (Quadratisch)</button>
-            <button class="function-btn" data-function="cubic">f(x) = x³ (Kubisch)</button>
-            <button class="function-btn" data-function="sqrt">f(x) = √x (Wurzel)</button>
-            <button class="function-btn" data-function="exponential">f(x) = eˣ (Exponential)</button>
-            <button class="function-btn" data-function="exp_neg">f(x) = e⁻ˣ (Exp. negativ)</button>
-            <button class="function-btn" data-function="two_exp">f(x) = 2ˣ (Exp. Basis 2)</button>
-            <button class="function-btn" data-function="two_exp_neg">f(x) = 2⁻ˣ (Exp. Basis 2 neg.)</button>
-            <button class="function-btn" data-function="logarithm">f(x) = ln(x) (Logarithmus)</button>
-            <button class="function-btn" data-function="sin">f(x) = sin(x) (Sinus)</button>
-            <button class="function-btn" data-function="cos">f(x) = cos(x) (Kosinus)</button>
-            <button class="function-btn" data-function="tan">f(x) = tan(x) (Tangens)</button>
-            <button class="function-btn" data-function="reciprocal">f(x) = 1/x (Hyperbel)</button>
-            <button class="function-btn" data-function="reciprocal_squared">f(x) = x⁻² (Rez. Quadrat)</button>
-            <button class="function-btn" data-function="power">f(x) = xⁿ (Potenz variabel)</button>
-        </div>
-        <div class="main-content">
-            <div class="canvas-container">
-                <canvas id="graphCanvas" width="700" height="700"></canvas>
-            </div>
-            <div class="sidebar">
-                <div class="slider-container" id="sliderContainer">
-                    <h3>Exponent anpassen</h3>
-                    <div class="slider-wrapper">
-                        <input type="range" id="powerSlider" min="-10" max="10" step="1" value="2">
-                        <div class="slider-value">n = <span id="powerValue">2</span></div>
-                    </div>
-                </div>
-                <div class="legend">
-                    <h3>Aktive Funktionen</h3>
-                    <div id="legendContent">
-                        <p style="color: #999; font-size: 14px;">Wähle Funktionen aus, um sie hier zu sehen.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <script>
-        const canvas = document.getElementById('graphCanvas');
-        const ctx = canvas.getContext('2d');
-        const width = canvas.width;
-        const height = canvas.height;
-        let powerExponent = 2;
-        let activeFunctions = new Set(['linear']);
-        const scale = 58;
-        const centerX = width / 2;
-        const centerY = height / 2;
-        const rangeX = 6;
-        const rangeY = 6;
-        const functions = {
-            linear: { name: 'f(x) = x', func: x => x, color: '#667eea' },
-            quadratic: { name: 'f(x) = x²', func: x => x * x, color: '#e74c3c' },
-            cubic: { name: 'f(x) = x³', func: x => x * x * x, color: '#3498db' },
-            sqrt: { name: 'f(x) = √x', func: x => x >= 0 ? Math.sqrt(x) : null, color: '#9b59b6' },
-            exponential: { name: 'f(x) = eˣ', func: x => Math.exp(x), color: '#e67e22' },
-            exp_neg: { name: 'f(x) = e⁻ˣ', func: x => Math.exp(-x), color: '#d35400' },
-            two_exp: { name: 'f(x) = 2ˣ', func: x => Math.pow(2, x), color: '#e84393' },
-            two_exp_neg: { name: 'f(x) = 2⁻ˣ', func: x => Math.pow(2, -x), color: '#fd79a8' },
-            logarithm: { name: 'f(x) = ln(x)', func: x => x > 0 ? Math.log(x) : null, color: '#16a085' },
-            sin: { name: 'f(x) = sin(x)', func: x => Math.sin(x), color: '#c0392b' },
-            cos: { name: 'f(x) = cos(x)', func: x => Math.cos(x), color: '#2980b9' },
-            tan: { name: 'f(x) = tan(x)', func: x => Math.tan(x), color: '#8e44ad' },
-            reciprocal: { name: 'f(x) = 1/x', func: x => x !== 0 ? 1 / x : null, color: '#27ae60' },
-            reciprocal_squared: { name: 'f(x) = x⁻²', func: x => x !== 0 ? 1 / (x * x) : null, color: '#f39c12' },
-            power: { name: 'f(x) = xⁿ', func: x => { if (powerExponent === 0) return 1; if (powerExponent < 0 && x === 0) return null; if (powerExponent % 2 === 0 || x >= 0) return Math.pow(x, powerExponent); return -Math.pow(-x, powerExponent); }, color: '#9b59b6' }
-        };
-        function drawGrid() {
-            ctx.strokeStyle = '#f0f0f0'; ctx.lineWidth = 1;
-            for (let i = -rangeX * 2; i <= rangeX * 2; i++) { const x = centerX + (i * 0.5) * scale; ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, height); ctx.stroke(); }
-            for (let i = -rangeY * 2; i <= rangeY * 2; i++) { const y = centerY - (i * 0.5) * scale; ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(width, y); ctx.stroke(); }
-            ctx.strokeStyle = '#d0d0d0';
-            for (let i = -rangeX; i <= rangeX; i++) { const x = centerX + i * scale; ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, height); ctx.stroke(); }
-            for (let i = -rangeY; i <= rangeY; i++) { const y = centerY - i * scale; ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(width, y); ctx.stroke(); }
-        }
-        function drawAxes() {
-            ctx.strokeStyle = '#333'; ctx.lineWidth = 2;
-            ctx.beginPath(); ctx.moveTo(0, centerY); ctx.lineTo(width, centerY); ctx.stroke();
-            ctx.beginPath(); ctx.moveTo(centerX, 0); ctx.lineTo(centerX, height); ctx.stroke();
-            ctx.fillStyle = '#333';
-            ctx.beginPath(); ctx.moveTo(width - 10, centerY - 5); ctx.lineTo(width, centerY); ctx.lineTo(width - 10, centerY + 5); ctx.fill();
-            ctx.beginPath(); ctx.moveTo(centerX - 5, 10); ctx.lineTo(centerX, 0); ctx.lineTo(centerX + 5, 10); ctx.fill();
-            ctx.font = '12px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-            for (let i = -rangeX; i <= rangeX; i++) { if (i !== 0) { const x = centerX + i * scale; ctx.fillText(i.toString(), x, centerY + 5); } }
-            ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
-            for (let i = -rangeY; i <= rangeY; i++) { if (i !== 0) { const y = centerY - i * scale; ctx.fillText(i.toString(), centerX - 5, y); } }
-            ctx.font = '14px Arial'; ctx.textAlign = 'center';
-            ctx.fillText('x', width - 20, centerY + 20); ctx.fillText('y', centerX + 15, 15); ctx.fillText('0', centerX - 10, centerY + 15);
-        }
-        function drawFunction(funcName) {
-            const func = functions[funcName]; ctx.strokeStyle = func.color; ctx.lineWidth = 3; ctx.beginPath();
-            let started = false;
-            for (let px = 0; px < width; px++) {
-                const x = (px - centerX) / scale; const y = func.func(x);
-                if (y !== null && !isNaN(y) && isFinite(y)) {
-                    const py = centerY - y * scale;
-                    if (py >= -100 && py <= height + 100) { if (!started) { ctx.moveTo(px, py); started = true; } else { ctx.lineTo(px, py); } } else { started = false; }
-                } else { started = false; }
-            }
-            ctx.stroke();
-        }
-        function updateLegend() {
-            const legendContent = document.getElementById('legendContent');
-            if (activeFunctions.size === 0) { legendContent.innerHTML = '<p style="color: #999; font-size: 14px;">Wähle Funktionen aus, um sie hier zu sehen.</p>'; return; }
-            let html = '';
-            activeFunctions.forEach(funcName => {
-                const func = functions[funcName]; let displayName = func.name;
-                if (funcName === 'power') { displayName = 'f(x) = x' + getSuperscript(powerExponent); }
-                html += '<div class="legend-item"><div class="legend-color" style="background: ' + func.color + ';"></div><span>' + displayName + '</span></div>';
-            });
-            legendContent.innerHTML = html;
-        }
-        function getSuperscript(n) {
-            const superscripts = { '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹', '-': '⁻' };
-            return n.toString().split('').map(c => superscripts[c] || c).join('');
-        }
-        function draw() { ctx.clearRect(0, 0, width, height); drawGrid(); drawAxes(); activeFunctions.forEach(funcName => drawFunction(funcName)); }
-        document.querySelectorAll('.function-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const funcName = btn.dataset.function;
-                if (activeFunctions.has(funcName)) { activeFunctions.delete(funcName); btn.classList.remove('active'); } else { activeFunctions.add(funcName); btn.classList.add('active'); }
-                const sliderContainer = document.getElementById('sliderContainer');
-                if (activeFunctions.has('power')) { sliderContainer.classList.add('active'); } else { sliderContainer.classList.remove('active'); }
-                updateLegend(); draw();
-            });
-        });
-        const powerSlider = document.getElementById('powerSlider');
-        const powerValue = document.getElementById('powerValue');
-        powerSlider.addEventListener('input', (e) => { powerExponent = parseInt(e.target.value); powerValue.textContent = powerExponent; if (activeFunctions.has('power')) { updateLegend(); draw(); } });
-        updateLegend(); draw();
-    </script>
+<div class="container">
+<header>
+<h1>📊 Funktionsgraphen, die du kennen musst!</h1>
+<p class="subtitle">Interaktive Visualisierung wichtiger mathematischer Funktionen</p>
+</header>
+<div class="controls">
+<button class="function-btn active" data-function="linear">$f(x) = x$</button>
+<button class="function-btn" data-function="quadratic">$f(x) = x^2$</button>
+<button class="function-btn" data-function="cubic">$f(x) = x^3$</button>
+<button class="function-btn" data-function="sqrt">$f(x) = \sqrt{x} = x^{\frac{1}{2}}$</button>
+<button class="function-btn" data-function="exponential">$f(x) = e^x$</button>
+<button class="function-btn" data-function="exp_neg">$f(x) = e^{-x} = \left(\frac{1}{e}\right)^x$</button>
+<button class="function-btn" data-function="two_exp">$f(x) = 2^x$</button>
+<button class="function-btn" data-function="two_exp_neg">$f(x) = 2^{-x} = \left(\frac{1}{2}\right)^x$</button>
+<button class="function-btn" data-function="logarithm">$f(x) = \ln(x)$</button>
+<button class="function-btn" data-function="sin">$f(x) = \sin(x)$</button>
+<button class="function-btn" data-function="cos">$f(x) = \cos(x)$</button>
+<button class="function-btn" data-function="tan">$f(x) = \tan(x)$</button>
+<button class="function-btn" data-function="reciprocal">$f(x) = x^{-1} = \frac{1}{x}$</button>
+<button class="function-btn" data-function="reciprocal_squared">$f(x) = x^{-2} = \frac{1}{x^2}$</button>
+<button class="function-btn" data-function="power">$f(x) = x^n$</button>
+</div>
+<div class="main-content">
+<div class="canvas-container">
+<canvas id="graphCanvas" width="700" height="700"></canvas>
+</div>
+<div class="sidebar">
+<div class="slider-container" id="sliderContainer">
+<h3>Exponent anpassen</h3>
+<div class="slider-wrapper">
+<input type="range" id="powerSlider" min="-10" max="10" step="1" value="2">
+<div class="slider-value">n = <span id="powerValue">2</span></div>
+</div>
+</div>
+<div class="legend">
+<h3>Aktive Funktionen</h3>
+<div id="legendContent"><p style="color: #999;">Wähle Funktionen aus.</p></div>
+</div>
+</div>
+</div>
+</div>
+<script>
+const canvas=document.getElementById('graphCanvas'),ctx=canvas.getContext('2d'),width=700,height=700;let powerExponent=2,activeFunctions=new Set(['linear']);const scale=58,centerX=350,centerY=350,rangeX=6,rangeY=6,functions={linear:{name:'$f(x) = x$',func:x=>x,color:'#667eea'},quadratic:{name:'$f(x) = x^2$',func:x=>x*x,color:'#e74c3c'},cubic:{name:'$f(x) = x^3$',func:x=>x*x*x,color:'#3498db'},sqrt:{name:'$f(x) = \\sqrt{x} = x^{\\frac{1}{2}}$',func:x=>x>=0?Math.sqrt(x):null,color:'#9b59b6'},exponential:{name:'$f(x) = e^x$',func:x=>Math.exp(x),color:'#e67e22'},exp_neg:{name:'$f(x) = e^{-x} = \\left(\\frac{1}{e}\\right)^x$',func:x=>Math.exp(-x),color:'#d35400'},two_exp:{name:'$f(x) = 2^x$',func:x=>Math.pow(2,x),color:'#e84393'},two_exp_neg:{name:'$f(x) = 2^{-x} = \\left(\\frac{1}{2}\\right)^x$',func:x=>Math.pow(2,-x),color:'#fd79a8'},logarithm:{name:'$f(x) = \\ln(x)$',func:x=>x>0?Math.log(x):null,color:'#16a085'},sin:{name:'$f(x) = \\sin(x)$',func:x=>Math.sin(x),color:'#c0392b'},cos:{name:'$f(x) = \\cos(x)$',func:x=>Math.cos(x),color:'#2980b9'},tan:{name:'$f(x) = \\tan(x)$',func:x=>Math.tan(x),color:'#8e44ad'},reciprocal:{name:'$f(x) = x^{-1} = \\frac{1}{x}$',func:x=>x!==0?1/x:null,color:'#27ae60'},reciprocal_squared:{name:'$f(x) = x^{-2} = \\frac{1}{x^2}$',func:x=>x!==0?1/(x*x):null,color:'#f39c12'},power:{name:'$f(x) = x^n$',func:x=>{if(powerExponent===0)return 1;if(powerExponent<0&&x===0)return null;if(powerExponent%2===0||x>=0)return Math.pow(x,powerExponent);return-Math.pow(-x,powerExponent)},color:'#9b59b6'}};function drawGrid(){ctx.strokeStyle='#f0f0f0';ctx.lineWidth=1;for(let i=-rangeX*2;i<=rangeX*2;i++){const x=centerX+i*0.5*scale;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,height);ctx.stroke()}for(let i=-rangeY*2;i<=rangeY*2;i++){const y=centerY-i*0.5*scale;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(width,y);ctx.stroke()}ctx.strokeStyle='#d0d0d0';for(let i=-rangeX;i<=rangeX;i++){const x=centerX+i*scale;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,height);ctx.stroke()}for(let i=-rangeY;i<=rangeY;i++){const y=centerY-i*scale;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(width,y);ctx.stroke()}}function drawAxes(){ctx.strokeStyle='#333';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(0,centerY);ctx.lineTo(width,centerY);ctx.stroke();ctx.beginPath();ctx.moveTo(centerX,0);ctx.lineTo(centerX,height);ctx.stroke();ctx.fillStyle='#333';ctx.beginPath();ctx.moveTo(width-10,centerY-5);ctx.lineTo(width,centerY);ctx.lineTo(width-10,centerY+5);ctx.fill();ctx.beginPath();ctx.moveTo(centerX-5,10);ctx.lineTo(centerX,0);ctx.lineTo(centerX+5,10);ctx.fill();ctx.font='12px Arial';ctx.textAlign='center';ctx.textBaseline='top';for(let i=-rangeX;i<=rangeX;i++)if(i!==0)ctx.fillText(i,centerX+i*scale,centerY+5);ctx.textAlign='right';ctx.textBaseline='middle';for(let i=-rangeY;i<=rangeY;i++)if(i!==0)ctx.fillText(i,centerX-5,centerY-i*scale);ctx.font='14px Arial';ctx.textAlign='center';ctx.fillText('x',width-20,centerY+20);ctx.fillText('y',centerX+15,15);ctx.fillText('0',centerX-10,centerY+15)}function drawFunction(funcName){const func=functions[funcName];ctx.strokeStyle=func.color;ctx.lineWidth=3;ctx.beginPath();let started=false;for(let px=0;px<width;px++){const x=(px-centerX)/scale,y=func.func(x);if(y!==null&&!isNaN(y)&&isFinite(y)){const py=centerY-y*scale;if(py>=-100&&py<=height+100){if(!started){ctx.moveTo(px,py);started=true}else{ctx.lineTo(px,py)}}else{started=false}}else{started=false}}ctx.stroke()}function updateLegend(){const legendContent=document.getElementById('legendContent');if(activeFunctions.size===0){legendContent.innerHTML='<p style="color: #999;">Wähle Funktionen aus.</p>';return}let html='';activeFunctions.forEach(funcName=>{const func=functions[funcName];let displayName=func.name;if(funcName==='power')displayName='$f(x) = x^{'+powerExponent+'}$';html+='<div class="legend-item"><div class="legend-color" style="background: '+func.color+';"></div><span>'+displayName+'</span></div>'});legendContent.innerHTML=html;renderMathInElement(legendContent,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]})}function draw(){ctx.clearRect(0,0,width,height);drawGrid();drawAxes();activeFunctions.forEach(funcName=>drawFunction(funcName))}document.querySelectorAll('.function-btn').forEach(btn=>{btn.addEventListener('click',()=>{const funcName=btn.dataset.function;if(activeFunctions.has(funcName)){activeFunctions.delete(funcName);btn.classList.remove('active')}else{activeFunctions.add(funcName);btn.classList.add('active')}const sliderContainer=document.getElementById('sliderContainer');if(activeFunctions.has('power')){sliderContainer.classList.add('active')}else{sliderContainer.classList.remove('active')}updateLegend();draw()})});const powerSlider=document.getElementById('powerSlider'),powerValue=document.getElementById('powerValue');powerSlider.addEventListener('input',e=>{powerExponent=parseInt(e.target.value);powerValue.textContent=powerExponent;if(activeFunctions.has('power')){updateLegend();draw()}});window.addEventListener('load',()=>{renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});updateLegend();draw()});
+</script>
 </body>
 </html>
