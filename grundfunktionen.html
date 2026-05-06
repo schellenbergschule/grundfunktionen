@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Funktionsgraphen, die du kennen musst!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .function-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            background: white;
+            color: #667eea;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .function-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .function-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .content {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .canvas-container {
+            flex: 1;
+            min-width: 300px;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        canvas {
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .info-panel {
+            width: 350px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-left: 2px solid #e9ecef;
+        }
+
+        .info-panel h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+        }
+
+        .function-formula {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1.3em;
+            text-align: center;
+            margin-bottom: 20px;
+            font-family: 'Courier New', monospace;
+            color: #764ba2;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .properties {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .properties h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .properties ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .properties li {
+            padding: 8px 0;
+            border-bottom: 1px solid #e9ecef;
+            color: #495057;
+        }
+
+        .properties li:last-child {
+            border-bottom: none;
+        }
+
+        .properties li strong {
+            color: #764ba2;
+        }
+
+        .slider-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        .slider-container.active {
+            display: block;
+        }
+
+        .slider-container h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .slider-wrapper {
+            margin-bottom: 10px;
+        }
+
+        .slider-wrapper input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #e9ecef;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .slider-wrapper input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            cursor: pointer;
+        }
+
+        .slider-wrapper input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            cursor: pointer;
+            border: none;
+        }
+
+        .slider-value {
+            text-align: center;
+            font-size: 1.5em;
+            color: #764ba2;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .info-panel {
+                width: 100%;
+                border-left: none;
+                border-top: 2px solid #e9ecef;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .function-btn {
+                font-size: 12px;
+                padding: 10px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 Funktionsgraphen, die du kennen musst!</h1>
+            <p class="subtitle">Interaktive Visualisierung wichtiger mathematischer Funktionen</p>
+        </header>
+
+        <div class="controls">
+            <button class="function-btn active" data-function="linear">f(x) = x</button>
+            <button class="function-btn" data-function="quadratic">f(x) = x²</button>
+            <button class="function-btn" data-function="cubic">f(x) = x³</button>
+            <button class="function-btn" data-function="sqrt">f(x) = √x</button>
+            <button class="function-btn" data-function="exponential">f(x) = eˣ</button>
+            <button class="function-btn" data-function="exp_neg">f(x) = e⁻ˣ</button>
+            <button class="function-btn" data-function="two_exp">f(x) = 2ˣ</button>
+            <button class="function-btn" data-function="two_exp_neg">f(x) = 2⁻ˣ</button>
+            <button class="function-btn" data-function="logarithm">f(x) = ln(x)</button>
+            <button class="function-btn" data-function="sin">f(x) = sin(x)</button>
+            <button class="function-btn" data-function="cos">f(x) = cos(x)</button>
+            <button class="function-btn" data-function="tan">f(x) = tan(x)</button>
+            <button class="function-btn" data-function="reciprocal">f(x) = x⁻¹ = 1/x</button>
+            <button class="function-btn" data-function="reciprocal_squared">f(x) = x⁻²</button>
+            <button class="function-btn" data-function="power">f(x) = xⁿ</button>
+        </div>
+
+        <div class="content">
+            <div class="canvas-container">
+                <canvas id="graphCanvas" width="600" height="600"></canvas>
+            </div>
+
+            <div class="info-panel">
+                <h2 id="functionName">Lineare Funktion</h2>
+                <div class="function-formula" id="functionFormula">f(x) = x</div>
+                
+                <div class="slider-container" id="sliderContainer">
+                    <h3>Exponent anpassen:</h3>
+                    <div class="slider-wrapper">
+                        <input type="range" id="powerSlider" min="-10" max="10" step="1" value="2">
+                        <div class="slider-value">n = <span id="powerValue">2</span></div>
+                    </div>
+                </div>
+
+                <div class="properties">
+                    <h3>Eigenschaften:</h3>
+                    <ul id="propertiesList">
+                        <li><strong>Definitionsbereich:</strong> ℝ</li>
+                        <li><strong>Wertebereich:</strong> ℝ</li>
+                        <li><strong>Nullstelle:</strong> x = 0</li>
+                        <li><strong>Symmetrie:</strong> Punktsymmetrisch zum Ursprung</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('graphCanvas');
+        const ctx = canvas.getContext('2d');
+        const width = canvas.width;
+        const height = canvas.height;
+
+        let powerExponent = 2;
+
+        // Koordinatensystem-Einstellungen
+        const scale = 50; // 50 Pixel = 1 Einheit
+        const centerX = width / 2;
+        const centerY = height / 2;
+        const rangeX = 6; // -6 bis +6
+        const rangeY = 6; // -6 bis +6
+
+        const functions = {
+            linear: {
+                name: 'Lineare Funktion',
+                formula: 'f(x) = x',
+                func: x => x,
+                properties: [
+                    '<strong>Definitionsbereich:</strong> ℝ',
+                    '<strong>Wertebereich:</strong> ℝ',
+                    '<strong>Nullstelle:</strong> x = 0',
+                    '<strong>Symmetrie:</strong> Punktsymmetrisch zum Ursprung',
+                    '<strong>Steigung:</strong> konstant (m = 1)'
+                ],
+                color: '#667eea'
+            },
+            quadratic: {
+                name: 'Quadratische Funktion',
+                formula: 'f(x) = x²',
+                func: x => x * x,
+                properties: [
+                    '<strong>Definitionsbereich:</strong> ℝ',
+                    '<strong>Wertebereich:</strong> [0, ∞)',
+                    '<strong>Nullstelle:</strong> x = 0',
+                    '<strong>Symmetrie:</strong> Achsensymmetrisch zur y-Achse',
+                    '<strong>Scheitelpunkt:</strong> (0, 0)',
+                    '<strong>Form:</strong> Parabel'
+                ],
+                color: '#e74c3c'
+            },
+            cubic: {
+                name: 'Kubische Funktion',
+                formula: 'f(x) = x³',
+                func: x => x * x * x,
+                properties: [
+                    '<strong>Definitionsbereich:</strong> ℝ',
+                    '<strong>Wertebereich:</strong> ℝ',
+                    '<strong>Nullstelle:</strong> x = 0',
+                    '<strong>Symmetrie:</strong> Punktsymmetrisch zum Ursprung',
+                    '<strong>Wendepunkt:</strong> (0, 0)'
+                ],
+                color: '#3498db'
+            },
+            sqrt: {
+                name: 'Wurzelfunktion',
+                formula: 'f(x) = √x',
+                func: x => x >= 0 ? Math.sqrt(x) : null,
+                properties: [
+                    '<strong>Definitionsbereich:</strong> [0, ∞)',
+                    '<strong>Wertebereich:</strong> [0, ∞)',
+                    '<strong>Nullstelle:</strong> x = 0',
+                    '<strong>Monotonie:</strong> streng monoton steigend',
+                    '<strong>Besonderheit:</strong> Umkehrfunktion von x²'
+                ],
+                color: '#9b59b6'
+            },
+            exponential: {
+                name: 'Exponentialfunktion',
+                formula: 'f(x) = eˣ',
+                func: x => Math.exp(x),
+                properties: [
+                    '<strong>Definitionsbereich:</strong> ℝ',
+                    '<strong>Wertebereich:</strong> (0, ∞)',
+                    '<strong>Keine Nullstellen</strong>',
+                    '<strong>Asymptote:</strong> y = 0 (x-Achse)',
+                    '<strong>Monotonie:</strong> streng monoton steigend',
+                    '<strong>f(0) = 1</strong>'
+                ],
+                color: '#e67e22'
+            },
+            exp_neg: {
+                name: 'Negative Exponentialfunktion',
+                formula: 'f(x) = e⁻ˣ',
+                func: x => Math.exp(-x),
+                properties: [
+                    '<strong>Definitionsbereich:</strong> ℝ',
+                    '<strong>Wertebereich:</strong> (0, ∞)',
+                    '<strong>Keine Nullstellen</strong>',
+                    '<strong>Asymptote:</strong> y = 0 (x-Achse)',
+                    '<strong>Monotonie:</strong> streng monoton fallend',
+                    '<strong>f(0) = 1</strong>'
+                ],
+                color: '#d35400'
+            },
+            two_exp: {
+                name: 'Exponentialfunktion zur Basis 2',
+                formula: 'f(x) = 2ˣ',
+                func: x => Math.pow(2, x),
+                properties: [
+                    '<strong>Definitionsbereich:</strong> ℝ',
+                    '<strong>Wertebereich:</strong> (0, ∞)',
+                    '<strong>Keine Nullstellen</strong>',
+                    '<strong>Asymptote:</strong> y = 0 (x-Achse)',
+                    '<strong>Monotonie:</strong> streng monoton steigend',
+                    '<strong>f(0) = 1</strong>'
+                ],
+                color: '#e84393'
+            },
+            two_exp_neg: {
+                name: 'Negative Exponentialfunktion zur Basis 2',
+                formula: 'f(x) = 2⁻ˣ',
+                func: x => Math.pow(2, -x),
+                properties: [
+                    '<strong>Definitionsbereich:</strong> ℝ',
+                    '<strong>Wertebereich:</strong> (0, ∞)',
+                    '<strong>Keine Nullstellen</strong>',
+                    '<strong>Asymptote:</strong> y = 0 (x-Achse)',
+                    '<strong>Monotonie:</strong> streng monoton fallend',
+                    '<strong>f(0) = 1</strong>'
+                ],
+                color: '#fd79a8'
+            },
+            logarithm: {
+                name: 'Logarithmusfunktion',
+                formula: 'f(x) = ln(x)',
+                func: x => x > 0 ? Math.log(x) : null,
+                properties: [
+                    '<strong>Definitionsbereich:</strong> (0, ∞)',
+                    '<strong>Wertebereich:</strong> ℝ',
+                    '<strong>Nullstelle:</strong> x = 1',
+                    '<strong>Asymptote:</strong> x = 0 (y-Achse)',
+                    '<strong>Monotonie:</strong> streng monoton steigend',
+                    '<strong>Umkehrfunktion von eˣ</strong>'
+                ],
+                color: '#16a085'
+            },
+            sin: {
+                name: 'Sinusfunktion',
+                formula: 'f(x) = sin(x)',
+                func: x => Math.sin(x),
+                properties: [
+                    '<strong>Definitionsbereich:</strong> ℝ',
+                    '<strong>Wertebereich:</strong> [-1, 1]',
+                    '<strong>Periode:</strong> 2π',
+                    '<strong>Nullstellen:</strong> x = kπ (k ∈ ℤ)',
+                    '<strong>Symmetrie:</strong> Punktsymmetrisch zum Ursprung',
+                    '<strong>Amplitude:</strong> 1'
+                ],
+                color: '#c0392b'
+            },
+            cos: {
+                name: 'Kosinusfunktion',
+                formula: 'f(x) = cos(x)',
+                func: x => Math.cos(x),
+                properties: [
+                    '<strong>Definitionsbereich:</strong> ℝ',
+                    '<strong>Wertebereich:</strong> [-1, 1]',
+                    '<strong>Periode:</strong> 2π',
+                    '<strong>Nullstellen:</strong> x = π/2 + kπ (k ∈ ℤ)',
+                    '<strong>Symmetrie:</strong> Achsensymmetrisch zur y-Achse',
+                    '<strong>Amplitude:</strong> 1'
+                ],
+                color: '#2980b9'
+            },
+            tan: {
+                name: 'Tangensfunktion',
+                formula: 'f(x) = tan(x)',
+                func: x => Math.tan(x),
+                properties: [
+                    '<strong>Definitionsbereich:</strong> ℝ \\ {π/2 + kπ}',
+                    '<strong>Wertebereich:</strong> ℝ',
+                    '<strong>Periode:</strong> π',
+                    '<strong>Nullstellen:</strong> x = kπ (k ∈ ℤ)',
+                    '<strong>Asymptoten:</strong> x = π/2 + kπ',
+                    '<strong>Symmetrie:</strong> Punktsymmetrisch zum Ursprung'
+                ],
+                color: '#8e44ad'
+            },
+            reciprocal: {
+                name: 'Hyperbel',
+                formula: 'f(x) = x⁻¹ = 1/x',
+                func: x => x !== 0 ? 1 / x : null,
+                properties: [
+                    '<strong>Definitionsbereich:</strong> ℝ \\ {0}',
+                    '<strong>Wertebereich:</strong> ℝ \\ {0}',
+                    '<strong>Keine Nullstellen</strong>',
+                    '<strong>Asymptoten:</strong> x = 0 und y = 0',
+                    '<strong>Symmetrie:</strong> Punktsymmetrisch zum Ursprung',
+                    '<strong>Monotonie:</strong> streng monoton fallend'
+                ],
+                color: '#27ae60'
+            },
+            reciprocal_squared: {
+                name: 'Reziproke Quadratfunktion',
+                formula: 'f(x) = x⁻²',
+                func: x => x !== 0 ? 1 / (x * x) : null,
+                properties: [
+                    '<strong>Definitionsbereich:</strong> ℝ \\ {0}',
+                    '<strong>Wertebereich:</strong> (0, ∞)',
+                    '<strong>Keine Nullstellen</strong>',
+                    '<strong>Asymptoten:</strong> x = 0 und y = 0',
+                    '<strong>Symmetrie:</strong> Achsensymmetrisch zur y-Achse',
+                    '<strong>Monotonie:</strong> fallend für x > 0, steigend für x < 0'
+                ],
+                color: '#f39c12'
+            },
+            power: {
+                name: 'Allgemeine Potenzfunktion',
+                formula: 'f(x) = x²',
+                func: x => {
+                    if (powerExponent === 0) return 1;
+                    if (powerExponent < 0 && x === 0) return null;
+                    if (powerExponent % 2 === 0 || x >= 0) {
+                        return Math.pow(x, powerExponent);
+                    }
+                    return -Math.pow(-x, powerExponent);
+                },
+                properties: [
+                    '<strong>Definitionsbereich:</strong> abhängig von n',
+                    '<strong>Wertebereich:</strong> abhängig von n',
+                    '<strong>Verhalten:</strong> ändert sich mit dem Exponenten',
+                    '<strong>Nutze den Schieberegler!</strong>'
+                ],
+                color: '#9b59b6'
+            }
+        };
+
+        let currentFunction = 'linear';
+
+        function drawGrid() {
+            // Feine Gitterlinien (halbe Einheiten)
+            ctx.strokeStyle = '#f0f0f0';
+            ctx.lineWidth = 1;
+
+            for (let i = -rangeX * 2; i <= rangeX * 2; i++) {
+                const x = centerX + (i * 0.5) * scale;
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, height);
+                ctx.stroke();
+            }
+
+            for (let i = -rangeY * 2; i <= rangeY * 2; i++) {
+                const y = centerY - (i * 0.5) * scale;
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(width, y);
+                ctx.stroke();
+            }
+
+            // Hauptgitterlinien (ganze Einheiten)
+            ctx.strokeStyle = '#d0d0d0';
+            ctx.lineWidth = 1;
+
+            for (let i = -rangeX; i <= rangeX; i++) {
+                const x = centerX + i * scale;
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, height);
+                ctx.stroke();
+            }
+
+            for (let i = -rangeY; i <= rangeY; i++) {
+                const y = centerY - i * scale;
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(width, y);
+                ctx.stroke();
+            }
+        }
+
+        function drawAxes() {
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 2;
+
+            // X-Achse
+            ctx.beginPath();
+            ctx.moveTo(0, centerY);
+            ctx.lineTo(width, centerY);
+            ctx.stroke();
+
+            // Y-Achse
+            ctx.beginPath();
+            ctx.moveTo(centerX, 0);
+            ctx.lineTo(centerX, height);
+            ctx.stroke();
+
+            // Pfeile
+            ctx.fillStyle = '#333';
+            // X-Achse Pfeil
+            ctx.beginPath();
+            ctx.moveTo(width - 10, centerY - 5);
+            ctx.lineTo(width, centerY);
+            ctx.lineTo(width - 10, centerY + 5);
+            ctx.fill();
+
+            // Y-Achse Pfeil
+            ctx.beginPath();
+            ctx.moveTo(centerX - 5, 10);
+            ctx.lineTo(centerX, 0);
+            ctx.lineTo(centerX + 5, 10);
+            ctx.fill();
+
+            // Achsenbeschriftungen
+            ctx.fillStyle = '#333';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+
+            // X-Achse Zahlen
+            for (let i = -rangeX; i <= rangeX; i++) {
+                if (i !== 0) {
+                    const x = centerX + i * scale;
+                    ctx.fillText(i.toString(), x, centerY + 5);
+                }
+            }
+
+            // Y-Achse Zahlen
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'middle';
+            for (let i = -rangeY; i <= rangeY; i++) {
+                if (i !== 0) {
+                    const y = centerY - i * scale;
+                    ctx.fillText(i.toString(), centerX - 5, y);
+                }
+            }
+
+            // Achsenbeschriftungen
+            ctx.font = '14px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('x', width - 20, centerY + 20);
+            ctx.fillText('y', centerX + 15, 15);
+            ctx.fillText('0', centerX - 10, centerY + 15);
+        }
+
+        function drawFunction(funcName) {
+            const func = functions[funcName];
+            ctx.strokeStyle = func.color;
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+
+            let started = false;
+
+            for (let px = 0; px < width; px++) {
+                const x = (px - centerX) / scale;
+                const y = func.func(x);
+
+                if (y !== null && !isNaN(y) && isFinite(y)) {
+                    const py = centerY - y * scale;
+
+                    if (py >= -100 && py <= height + 100) {
+                        if (!started) {
+                            ctx.moveTo(px, py);
+                            started = true;
+                        } else {
+                            ctx.lineTo(px, py);
+                        }
+                    } else {
+                        started = false;
+                    }
+                } else {
+                    started = false;
+                }
+            }
+
+            ctx.stroke();
+        }
+
+        function updateInfo(funcName) {
+            const func = functions[funcName];
+            document.getElementById('functionName').textContent = func.name;
+            
+            if (funcName === 'power') {
+                document.getElementById('functionFormula').textContent = `f(x) = x${getSuperscript(powerExponent)}`;
+            } else {
+                document.getElementById('functionFormula').textContent = func.formula;
+            }
+            
+            const propertiesList = document.getElementById('propertiesList');
+            propertiesList.innerHTML = func.properties.map(prop => `<li>${prop}</li>`).join('');
+
+            const sliderContainer = document.getElementById('sliderContainer');
+            if (funcName === 'power') {
+                sliderContainer.classList.add('active');
+            } else {
+                sliderContainer.classList.remove('active');
+            }
+        }
+
+        function getSuperscript(n) {
+            const superscripts = {
+                '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴',
+                '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹',
+                '-': '⁻'
+            };
+            return n.toString().split('').map(c => superscripts[c] || c).join('');
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, width, height);
+            drawGrid();
+            drawAxes();
+            drawFunction(currentFunction);
+        }
+
+        document.querySelectorAll('.function-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.function-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFunction = btn.dataset.function;
+                updateInfo(currentFunction);
+                draw();
+            });
+        });
+
+        const powerSlider = document.getElementById('powerSlider');
+        const powerValue = document.getElementById('powerValue');
+
+        powerSlider.addEventListener('input', (e) => {
+            powerExponent = parseInt(e.target.value);
+            powerValue.textContent = powerExponent;
+            if (currentFunction === 'power') {
+                updateInfo(currentFunction);
+                draw();
+            }
+        });
+
+        updateInfo(currentFunction);
+        draw();
+    </script>
+</body>
+</html>
